@@ -17,7 +17,7 @@ class Settings:
         self.FpS = 60
 
         self.bg_file = Path.cwd() / "assets" / "images" / "starbase.png"
-        
+        self.difficulty_scale = 1.1
         self.ship_file = Path.cwd() / "assets" / "images" / "ship2(no bg).png"
         self.ship_width = 40
         self.ship_height = 60
@@ -52,3 +52,20 @@ self.button_font_size = 48
 self.hud_font_size = 20
 self.font_file = Path.cwd() / "assets" / "fonts" / "slikscreen"/"slikscreen-Bold.ttf"
 
+
+def initialize_dynamic_settings(self):
+   self.ship_speed = 5
+   self.starting_ship_count = 3
+
+   self.bullet_width = 25
+   self.bullet_speed = 7
+   self.bullet_height = 80
+   self.bullet_amount = 5
+
+   self.fleet_speed = 2
+   self.fleet_drop_speed = 40
+
+   def increase_difficulty(self):
+    self.ship_speed *= self.difficulty_scale
+    self.bullet_speed *= self.difficulty_scale
+    self.fleet_speed *= self.difficulty_scale
