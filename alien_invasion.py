@@ -11,8 +11,10 @@ from button import Button
 class AlienInvasion:
     def __init__(self):
         pygame.init()
-
         self.settings = Settings()
+        self.settings.initialize_dynamic_settings()
+        self.game_stat = Gamestat(self.settings.starting_ship_count)
+
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height)
         )
@@ -52,6 +54,11 @@ class AlienInvasion:
         True, True
     )
 
+    if self.alien_fleet.check_destroyed_status():
+        self._reset_level()
+        self.settings.increase_difficulty()
+
+
     if pygame.sprite.spritecollideany(self.ship, self.alien_fleet.fleet):
         self._ship_hit()
 
@@ -82,8 +89,8 @@ class AlienInvasion:
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     self.ship.moving_up = False
-                elif event.key == pygame.K_DOWN:
-                    self.ship.moving_down = False
+                elif event.key == pygame.K_DOWN and self.game_active == True:
+                    sellf.check_events()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.play_button.check_clicked(mouse_pos):
@@ -95,6 +102,8 @@ class AlienInvasion:
         self.alien_fleet.create_fleet()
 
         def restart_game(self):
+            self.settings.initialize_dynamic_settings()
+            self.game_stat.ship_limit = self.settings.starting_ship_count
             
 
 
@@ -109,6 +118,9 @@ class AlienInvasion:
         self.ship.draw()
         self.arsenal.draw_arsenal()
         self.alien_fleet.draw_fleet()
+        draw HUD(self)
+        
+        
         if not self.game_active:
             self.play_button.draw()
             pygame.mouse.set_visible(True)
