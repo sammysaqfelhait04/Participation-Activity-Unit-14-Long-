@@ -1,0 +1,101 @@
+
+"""
+Alien Invasion Game
+Author: Sammy Saqfelhait
+Starter code: p1
+Date: 04/15/2026
+"""
+
+import sys
+import pygame
+from settings import Settings
+from ship import Ship
+from game_stat import Gamestat
+from arsenal import ShipArsenal
+from alien_fleet import AlienFleet
+from time import sleep
+
+class AlienInvasion:
+    def __init__(self):
+        pygame.init()
+
+        self.settings = Settings()
+        self.screen = pygame.display.set_mode(
+            (self.settings.screen_width, self.settings.screen_height)
+        )
+        pygame.display.set_caption(self.settings.name)
+
+        self.clock = pygame.time.Clock()
+
+        self.game_stat = Gamestat(self.settings.starting_ship_count)
+        self.game_active = True
+
+        self.arsenal = ShipArsenal(self)
+        self.ship = Ship(self, self.arsenal)
+
+        self.alien_fleet = AlienFleet(self)
+        self.alien_fleet.create_fleet()
+
+    def run_game(self):
+        while True:
+            self._check_events()
+
+            if self.game_active:
+                self.ship.update()
+                self.arsenal.update_arsenal()
+                self.alien_fleet.update_fleet()
+                self._check_collisions()
+
+            self._update_screen()
+            self.clock.tick(self.settings.FpS)
+
+    def _check_collisions(self):
+    pygame.sprite.groupcollide(
+        self.arsenal.arsenal,
+        self.alien_fleet.fleet,
+        True, True
+    )
+
+    if pygame.sprite.spritecollideany(self.ship, self.alien_fleet.fleet):
+        self._ship_hit()
+
+    if self.alien_fleet.check_fleet_bottom():
+        self._ship_hit()
+
+    def _ship_hit(self):
+    if self.game_stat.ship_limit > 0:
+        self.game_stat.ship_limit -= 1
+        self.arsenal.arsenal.empty()
+        self.alien_fleet.fleet.empty()
+        self.alien_fleet.create_fleet()
+        self.ship.rect.midleft = self.screen.get_rect().midleft
+    else:
+        self.game_active = False
+
+    def _check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.ship.moving_up = True
+                elif event.key == pygame.K_DOWN:
+                    self.ship.moving_down = True
+                elif event.key == pygame.K_SPACE:
+                    self.ship.fire()
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_UP:
+                    self.ship.moving_up = False
+                elif event.key == pygame.K_DOWN:
+                    self.ship.moving_down = False
+
+    def _update_screen(self):
+        self.screen.fill((0, 0, 0))
+        self.ship.draw()
+        self.arsenal.draw_arsenal()
+        self.alien_fleet.draw_fleet()
+        pygame.display.flip()
+
+if __name__ == '__main__':
+    ai = AlienInvasion()
+    ai.run_game()
