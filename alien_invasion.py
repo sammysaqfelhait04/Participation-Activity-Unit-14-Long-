@@ -1,11 +1,3 @@
-
-"""
-Alien Invasion Game
-Author: Sammy Saqfelhait
-Starter code: p1
-Date: 04/15/2026
-"""
-
 import sys
 import pygame
 from settings import Settings
@@ -14,6 +6,7 @@ from game_stat import Gamestat
 from arsenal import ShipArsenal
 from alien_fleet import AlienFleet
 from time import sleep
+from button import Button
 
 class AlienInvasion:
     def __init__(self):
@@ -29,6 +22,9 @@ class AlienInvasion:
 
         self.game_stat = Gamestat(self.settings.starting_ship_count)
         self.game_active = True
+
+        self.play_button = Button(self, "Play")
+
 
         self.arsenal = ShipArsenal(self)
         self.ship = Ship(self, self.arsenal)
@@ -88,12 +84,36 @@ class AlienInvasion:
                     self.ship.moving_up = False
                 elif event.key == pygame.K_DOWN:
                     self.ship.moving_down = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if self.play_button.check_clicked(mouse_pos):
+                    self.game
+
+    def _reset_level(self):
+        self.ship.arsenal.arsenal.empty()
+        self.alien_fleet.fleet.empty()
+        self.alien_fleet.create_fleet()
+
+        def restart_game(self):
+            
+
+
+            self.game_active = True
+            self.ship._center_ship()
+            self.game_active = True
+            pygame.mouse.set_visible(False)
+
 
     def _update_screen(self):
         self.screen.fill((0, 0, 0))
         self.ship.draw()
         self.arsenal.draw_arsenal()
         self.alien_fleet.draw_fleet()
+        if not self.game_active:
+            self.play_button.draw()
+            pygame.mouse.set_visible(True)
+
+
         pygame.display.flip()
 
 if __name__ == '__main__':
