@@ -1,11 +1,3 @@
-
-
-"""
-Alien Fleet module
-Author: Sammy Saqfelhait
-Purpose: Manage alien fleet and movement
-"""
-
 import pygame
 from alien import Alien
 
