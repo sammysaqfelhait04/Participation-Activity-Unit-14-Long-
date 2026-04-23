@@ -13,6 +13,7 @@ class AlienInvasion:
         pygame.init()
         self.settings = Settings()
         self.settings.initialize_dynamic_settings()
+        self.game_stat = self.game_stat(self)
         self.game_stat = Gamestat(self.settings.starting_ship_count)
 
         self.screen = pygame.display.set_mode(
@@ -48,11 +49,18 @@ class AlienInvasion:
             self.clock.tick(self.settings.FpS)
 
     def _check_collisions(self):
+
+        self.impact_sound().play()
+        self.game_stat.update(collisions)
+        self.game_stat.update_level()
+             self.alien_fleet.check_collisions(self.arsenal.arsenal)
+                            )
     pygame.sprite.groupcollide(
         self.arsenal.arsenal,
         self.alien_fleet.fleet,
         True, True
     )
+
 
     if self.alien_fleet.check_destroyed_status():
         self._reset_level()
@@ -104,7 +112,7 @@ class AlienInvasion:
         def restart_game(self):
             self.settings.initialize_dynamic_settings()
             self.game_stat.ship_limit = self.settings.starting_ship_count
-            
+            self.game_stat.reset_stats()
 
 
             self.game_active = True
